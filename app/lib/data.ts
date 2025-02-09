@@ -15,14 +15,22 @@ const pool = mysql.createPool({
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DATABASE,
   ssl: {
-    rejectUnauthorized: true
+    rejectUnauthorized: false
   }
 });
 
 export async function fetchRevenue() {
   try {
-    const [rows] = await pool.query('SELECT * FROM revenue');
-    return rows;
+    // We artificially delay a response for demo purposes.
+    // Don't do this in production :)
+    console.log('Fetching revenue data...');
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+ 
+    const data = await pool.query<Revenue[]>('SELECT * FROM revenue');
+ 
+    console.log('Data fetch completed after 3 seconds.');
+ 
+    return data[0];
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch revenue data.');
